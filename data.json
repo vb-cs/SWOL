@@ -1,0 +1,66 @@
+{
+    "exercises" : 
+    [
+        {
+            "name": "OHP",
+            "max_set_count": 2,
+            "data":
+            {
+                "2023-10-13":
+                {
+                    "set_count": 2,
+                    "set1" : 
+                    {
+                        "weight": 40,
+                        "reps": 10 
+                    },
+                    "set2" : 
+                    {
+                        "weight": 40,
+                        "reps": 10
+                    },
+                    "notes": ""
+                    
+
+                }
+
+            }
+    
+        },
+        {
+            "name": "Preacher Curls",
+            "max_set_count": 1,
+            "data":
+            {
+                "2023-10-11":
+                {
+                    "set_count": 1,
+
+                    "set1" : 
+                    {
+                        "weight": 25,
+                        "reps": 7
+                    },
+                    "notes": "Left hand"
+                    
+                },
+                
+                "2023-10-13":
+                {
+                    "set_count": 1,
+
+                    "set1" : 
+                    {
+                        "weight": 25,
+                        "reps": 7
+                    },
+                    "notes": "Left hand"
+                    
+                }
+            }
+            
+        }
+        
+   
+    ]
+}
