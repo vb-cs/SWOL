@@ -5,7 +5,10 @@ from PySide6.QtWidgets import (
     QToolBar,
     QApplication,
     QVBoxLayout,
+    
 )
+
+from PySide6.QtCore import QSize
 
 from PySide6.QtGui import QAction, QCloseEvent
 from PySide6.QtCore import Qt
@@ -23,7 +26,7 @@ class SWOL(QMainWindow):
 
         self.addToolBar(Qt.BottomToolBarArea, action_bar)
         self.setCentralWidget(self.table)
-
+        self.setMinimumSize(QSize(1000, 720))
         self.show()
 
     def closeEvent(self, event):

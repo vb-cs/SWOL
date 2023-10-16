@@ -3,12 +3,12 @@
     [
         {
             "name": "OHP",
-            "max_set_count": 2,
+            "max_nsets": 2,
             "data":
             {
                 "2023-10-13":
                 {
-                    "set_count": 2,
+                    "nsets": 2,
                     "set1" : 
                     {
                         "weight": 40,
@@ -29,12 +29,12 @@
         },
         {
             "name": "Preacher Curls",
-            "max_set_count": 1,
+            "max_nsets": 1,
             "data":
             {
                 "2023-10-11":
                 {
-                    "set_count": 1,
+                    "nsets": 1,
 
                     "set1" : 
                     {
@@ -47,7 +47,7 @@
                 
                 "2023-10-13":
                 {
-                    "set_count": 1,
+                    "nsets": 1,
 
                     "set1" : 
                     {
