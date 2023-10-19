@@ -34,10 +34,10 @@ class Table(QTableWidget):
     def __init__(self, data):
         super().__init__()
         self.data = data
-        self.refresh_data()
+        self.refresh()
         self.setSizeAdjustPolicy(QTableWidget.SizeAdjustPolicy.AdjustToContents)
 
-    def refresh_data(self):
+    def refresh(self):
         # Combine data keys
         self.clear()
         dates = sorted(

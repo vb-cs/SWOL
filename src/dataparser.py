@@ -6,11 +6,11 @@ file_path = sys.argv[0]
 
 class Parser:
     def parse():
-        with open(f"{file_path}/../../data/data.json") as data_file:
+        with open(os.path.abspath(f"{file_path}/../../data/data.json")) as data_file:
             Parser.data = json.load(data_file)
 
     def save():
-        with open(f"{file_path}/../../data/data.json", "w") as data_file:
+        with open(os.path.abspath(f"{file_path}/../../data/data.json"), "w") as data_file:
             json.dump(Parser.data, data_file)
 
     def add(entry, name, date, index):

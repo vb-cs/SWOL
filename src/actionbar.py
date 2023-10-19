@@ -3,10 +3,8 @@ from PySide6.QtWidgets import (
     QLabel,
     QPushButton,
     QLineEdit,
-    QMainWindow,
     QVBoxLayout,
     QToolBar,
-    QApplication,
     QVBoxLayout,
     QTableWidget,
     QTableWidgetItem,
@@ -20,7 +18,6 @@ from PySide6.QtWidgets import (
 
 from PySide6.QtGui import QAction
 from PySide6.QtCore import Qt
-import json
 from datetime import date
 
 from dataparser import Parser
@@ -33,31 +30,29 @@ class ActionBar(QToolBar):
         self.data = data
         self.parent_widget = parent_widget
 
-        self.add_entry = QAction("Add Entry")
+        self.new_entry = QAction("New Entry")
         self.remove_entry = QAction("Remove Entry")
-        # self.edit_entry = QAction("Edit Entry")
         self.import_data = QAction("Import Data")
         self.help = QAction("Help")
 
-        self.add_entry.triggered.connect(self._on_add_entry_click)
+        self.new_entry.triggered.connect(self._on_new_entry_click)
         self.import_data.triggered.connect(self._on_import_data_click)
         self.remove_entry.triggered.connect(self._on_remove_entry_click)
-        self.addAction(self.add_entry)
+        self.addAction(self.new_entry)
         self.addAction(self.remove_entry)
-        # self.addAction(self.edit_entry)
         self.addAction(self.import_data)
         self.addAction(self.help)
 
-    def _on_add_entry_click(self):
-        dialog = AddEntry(self.data, self.parent_widget.table.refresh_data)
-        dialog.exec()
+    def _on_new_entry_click(self):
+        NewEntry(self.data, self.parent_widget.refresh).exec()
+        
 
     def _on_remove_entry_click(self):
         date, ok = QInputDialog.getText(self, "Remove an Entry", "Date to remove:", QLineEdit.Normal)
         if date and ok:
             Parser.remove(date)
 
-        self.parent_widget.table.refresh_data()
+        self.parent_widget.refresh()
 
     def _on_import_data_click(self):
         delimiter = " "
@@ -66,12 +61,12 @@ class ActionBar(QToolBar):
         )
 
 
-class AddEntry(QDialog):
+class NewEntry(QDialog):
     def __init__(self, data, refresh_callback):
         super().__init__()
         self.refresh_callback = refresh_callback
         self.data = data
-        self.setWindowTitle("Add Entry")
+        self.setWindowTitle("New Entry")
 
         self.nrows = len(self.data["exercises"]) + 3
         self.ncols = 4
@@ -82,25 +77,27 @@ class AddEntry(QDialog):
         self.form.setSizeAdjustPolicy(QTableWidget.SizeAdjustPolicy.AdjustToContents)
 
         save_button = QDialogButtonBox.StandardButton.Save
-        self.add_exercise_button = QPushButton("Add New Exercise")
+        cancel_button = QDialogButtonBox.StandardButton.Cancel
+        self.new_exercise_button = QPushButton("New Exercise")
         self.add_sets_button = QPushButton("Add Sets")
 
         self.buttonBox = QDialogButtonBox()
         self.buttonBox.addButton(save_button)
-        self.buttonBox.addButton(self.add_exercise_button, QDialogButtonBox.ButtonRole.ActionRole)
+        self.buttonBox.addButton(cancel_button)
+        self.buttonBox.addButton(self.new_exercise_button, QDialogButtonBox.ButtonRole.ActionRole)
         self.buttonBox.addButton(self.add_sets_button, QDialogButtonBox.ButtonRole.ActionRole)
 
-        self.buttonBox.accepted.connect(self.ok)
-        self.add_exercise_button.released.connect(self.add_exercise)
-        self.add_sets_button.released.connect(self.add_sets)
-        # self.buttonBox.rejected.connect(self.reject)
+        self.buttonBox.accepted.connect(self._ok)
+        self.new_exercise_button.released.connect(self._new_exercise)
+        self.add_sets_button.released.connect(self._add_sets)
+        self.buttonBox.rejected.connect(self.reject)
 
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.form)
         self.layout.addWidget(self.buttonBox)
         self.setLayout(self.layout)
 
-    def ok(self):
+    def _ok(self):
         date = self.form.item(self.nrows - 1, 1).text()
 
         # edit the data
@@ -136,7 +133,7 @@ class AddEntry(QDialog):
 
         self.accept()
 
-    def add_exercise(self):
+    def _new_exercise(self):
         ex_name, ok = QInputDialog.getText(self, "Enter New Exercise", "Name:", QLineEdit.Normal)
         if ex_name and ok:
             self.form.insertRow(self.nrows - 2)
@@ -145,7 +142,7 @@ class AddEntry(QDialog):
 
         self.adjustSize()
 
-    def add_sets(self):
+    def _add_sets(self):
         nsets, ok = QInputDialog.getInt(
             self,
             "Enter Number of Sets to Add",
