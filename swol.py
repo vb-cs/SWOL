@@ -6,17 +6,18 @@ from PySide6.QtWidgets import (
     QApplication,
     QVBoxLayout,
     QWidget,
+    QSplitter,
 )
 
 from PySide6.QtCore import QSize
 
 from PySide6.QtGui import QAction, QCloseEvent
 from PySide6.QtCore import Qt
-from dataparser import Parser
-from actionbar import ActionBar
+from src.dataparser import Parser
+from src.actionbar.actionbar import ActionBar
 
-from table import Table
-from visualizer import Visualizer
+from src.table import Table
+from src.visualizer import Visualizer
 
 
 class SWOL(QMainWindow):
@@ -26,15 +27,13 @@ class SWOL(QMainWindow):
         self.visualizer = Visualizer(data)
         action_bar = ActionBar(self, data)
 
-        self.layout = QVBoxLayout()
-        self.layout.addWidget(self.visualizer)
-        self.layout.addWidget(self.table)
-
-        self.main_window = QWidget()
-        self.main_window.setLayout(self.layout)
+        self.splitter = QSplitter()
+        self.splitter.addWidget(self.visualizer)
+        self.splitter.addWidget(self.table)
+        self.splitter.setOrientation(Qt.Orientation.Vertical)
 
         self.addToolBar(Qt.BottomToolBarArea, action_bar)
-        self.setCentralWidget(self.main_window)
+        self.setCentralWidget(self.splitter)
         self.setMinimumSize(QSize(1000, 720))
         self.show()
 
