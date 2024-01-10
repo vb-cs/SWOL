@@ -7,7 +7,7 @@ file_path = sys.argv[0]
 
 
 class Data:
-    df = pd.MultiIndex()
+    df = pd.DataFrame()
 
     @classmethod
     def load(cls, file_name):
@@ -24,7 +24,11 @@ class Data:
     @classmethod
     def merge(cls, df_to_merge: pd.MultiIndex):
         cls.df = (
-            cls.df.reset_index().merge(df_to_merge.reset_index(), how="outer").set_index("index")
+            df_to_merge
+            if cls.df.empty
+            else cls.df.reset_index()
+            .merge(df_to_merge.reset_index(), how="outer")
+            .set_index("index")
         )
 
     @classmethod
