@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import (
+from PyQt5.QtWidgets import (
     QLabel,
     QMainWindow,
     QVBoxLayout,
@@ -9,21 +9,24 @@ from PySide6.QtWidgets import (
     QSplitter,
 )
 
-from PySide6.QtCore import QSize
+from PyQt5.QtCore import QSize
 
-from PySide6.QtGui import QAction, QCloseEvent
-from PySide6.QtCore import Qt
+from PyQt5.QtCore import Qt
 from src.dataparser import Parser
 from src.actionbar.actionbar import ActionBar
 
 from src.table import Table
 from src.visualizer import Visualizer
+from src.backend.data import Data
+
+import pandas as pd
+import numpy as np
 
 
 class SWOL(QMainWindow):
     def __init__(self, data):
         super().__init__()
-        self.table = Table(data)
+        self.table = Table()
         self.visualizer = Visualizer(data)
         action_bar = ActionBar(self, data)
 
@@ -50,7 +53,9 @@ class SWOL(QMainWindow):
 
 
 if __name__ == "__main__":
-    app = QApplication()
+    app = QApplication([])
+
+    Data.load()
     Parser.parse()
     s = SWOL(Parser.data)
     app.exec()

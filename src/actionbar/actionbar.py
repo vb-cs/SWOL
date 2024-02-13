@@ -1,4 +1,7 @@
-from PySide6.QtWidgets import (
+from datetime import date
+from functools import reduce
+
+from PyQt5.QtWidgets import (
     QWidget,
     QLabel,
     QPushButton,
@@ -14,17 +17,13 @@ from PySide6.QtWidgets import (
     QFileDialog,
     QInputDialog,
     QSizePolicy,
-    QHBoxLayout
+    QHBoxLayout,
+    QAction,
 )
+from PyQt5.QtCore import Qt
 
-from PySide6.QtGui import QAction
-from PySide6.QtCore import Qt
-from datetime import date
-
-from ..model.model import Data
+from ..backend.data import Data
 from .newentry import NewEntry
-from functools import reduce
-
 
 
 class ActionBar(QToolBar):
@@ -47,14 +46,14 @@ class ActionBar(QToolBar):
         self.addAction(self.help)
 
     def _on_new_entry_click(self):
-        NewEntry(self.data, self.parent_widget.refresh).exec()
+        NewEntry(self.data, self.parent_widget.table).exec()
 
     def _on_remove_entry_click(self):
         date, ok = QInputDialog.getText(
             self, "Remove an Entry", "Date to remove:", QLineEdit.Normal
         )
         if date and ok:
-            Parser.remove(date)
+            Data.remove(date)
             self.parent_widget.refresh()
 
     def _on_import_data_click(self):
@@ -64,4 +63,3 @@ class ActionBar(QToolBar):
         )
         with open(file_name, "r"):
             pass
-

@@ -10,9 +10,10 @@ class Data:
     df = pd.DataFrame()
 
     @classmethod
-    def load(cls, file_name):
-        cls.df = pd.read_csv(file_name, header=[0, 1], index_col=0)
-
+    def load(cls, data_path=f"{file_path}/../data/data.csv"):
+        if os.path.exists(data_path):
+            cls.df = pd.read_csv(data_path, header=[0, 1], index_col=0)
+    
     @classmethod
     def exercises(cls):
         return cls.df.columns.get_level_values(0).unique()
@@ -30,6 +31,9 @@ class Data:
             .merge(df_to_merge.reset_index(), how="outer")
             .set_index("index")
         )
+    @classmethod
+    def remove(cls, date):
+        cls.df = cls.df.drop(index=date)
 
     @classmethod
     def save(cls):
@@ -51,11 +55,3 @@ class Data:
             }
             Data.data["exercises"][name] = ex
 
-    @classmethod
-    def remove(cls, date):
-        for ex in Data.data["exercises"].values():
-            entry = ex["data"].pop(date, None)
-
-            # replace max_setn if necessary
-            if entry and entry["max_setn"] == ex["max_setn"]:
-                ex["max_setn"] = max(ex["data"].values(), key=lambda e: e["max_setn"])["max_setn"]

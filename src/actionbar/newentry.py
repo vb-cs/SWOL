@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import (
+from PyQt5.QtWidgets import (
     QWidget,
     QLabel,
     QPushButton,
@@ -19,10 +19,10 @@ from PySide6.QtWidgets import (
     QStyle,
     QApplication,
     QListWidget,
+    QAction,
 )
 
-from PySide6.QtGui import QAction, QIcon
-from PySide6.QtCore import Qt
+from PyQt5.QtCore import Qt
 import pandas as pd
 import numpy as np
 
@@ -30,7 +30,7 @@ from datetime import date
 from pathlib import Path
 from functools import reduce
 
-from ..model.model import Data
+from ..backend.data import Data
 
 
 class ExerciseEntry(QWidget):
@@ -90,9 +90,9 @@ class ExerciseEntry(QWidget):
 
 
 class NewEntry(QDialog):
-    def __init__(self, data, refresh_callback):
+    def __init__(self, data, table):
         super().__init__()
-        self.refresh_callback = refresh_callback
+        self.table = table
         self.data = data
         self.setWindowTitle("New Entry")
 
@@ -143,7 +143,9 @@ class NewEntry(QDialog):
 
     def _init_form(self):
         if len(self.exercise_entries) == 0:
-            self.form.addWidget(ExerciseEntry())
+            entry = ExerciseEntry()
+            self.form.addWidget(entry)
+            self.exercise_entries.append(entry)
         else:
             self.exercise_entries = [ExerciseEntry(ex) for ex in Data.exercises()]
             for entry in self.exercise_entries:
@@ -151,11 +153,9 @@ class NewEntry(QDialog):
 
     def _save(self):
         exercise_names = [name for entry in self.exercise_entries if (name := entry.exercise())]
-
         exercise_headers = [
             ex_name for ex_name in exercise_names for _ in range(2 * self.nsets + 1)
         ]
-
         weight_reps_notes = []
         for _ in exercise_names:
             for i in range(1, self.nsets + 1):
@@ -163,17 +163,18 @@ class NewEntry(QDialog):
             weight_reps_notes.append("Notes")
 
         sets = [exercise_headers, weight_reps_notes]
-
         dates = [self.dateEdit.text()]
         columns = pd.MultiIndex.from_arrays(sets)
         values = np.array(
             [val for entry in self.exercise_entries for val in entry.values()]
-        ).reshape((1, 6))
+        ).reshape((1, 1 + self.nsets * 2))
 
         new_df = pd.DataFrame(values, index=dates, columns=columns)
+        print(new_df)
+        self.table.mdl.beginResetModel()
         Data.merge(new_df)
-
-        self.refresh_callback()
+        print(self.table.mdl._data)
+        print(self.table.data)
         self.accept()
 
     def _add_row(self):
